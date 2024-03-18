@@ -1,4 +1,4 @@
-# LAB - Class 09 - IMS-api
+# LAB - IMS API - 401 Class 09
 
 Lab 09 Inventory Management System - build your own api project
 
