@@ -1,10 +1,10 @@
 'use strict';
 
-require('dotenv').config;
+require('dotenv').config();
 
 const { startServer } = require('./src/server');
 
-const { database } = require();
+const { database } = require('./src/schemas/schemas-index');
 
 async function initializeApp() {
   try {
