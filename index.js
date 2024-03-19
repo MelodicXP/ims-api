@@ -2,7 +2,7 @@
 
 require('dotenv').config;
 
-const { startServer } = require();
+const { startServer } = require('./src/server');
 
 const { database } = require();
 
