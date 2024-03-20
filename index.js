@@ -4,7 +4,7 @@ require('dotenv').config();
 
 const { startServer } = require('./src/server');
 
-const { database } = require('./src/Database/database-config');
+const { database } = require('./src/database/database-config');
 
 async function initializeApp() {
   try {
