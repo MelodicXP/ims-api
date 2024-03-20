@@ -2,7 +2,7 @@
 
 const { DataTypes } = require('sequelize');
 const jwt = require ('jsonwebtoken');
-const SECRET = process.env.SECRET;
+const { SECRET } = require('../../utilities/secret-config');
 
 module.exports = {
   username: {
