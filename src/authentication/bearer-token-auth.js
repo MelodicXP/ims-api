@@ -1,8 +1,8 @@
 'use strict';
 
 const jwt = require('jsonwebtoken');
-const CRUD = require('./crud-interface');
-const { SECRET } = require('./secret-config');
+const CRUD = require('../utilities/crud-interface');
+const { SECRET } = require('../utilities/secret-config');
 
 async function authenticateToken (userModel, token) {
 

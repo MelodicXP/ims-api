@@ -1,7 +1,7 @@
 'use strict';
 
 const bcrypt = require('bcrypt');
-const CRUD = require('./crud-interface');
+const CRUD = require('../utilities/crud-interface');
 
 async function authenticateBasic(userModel, username, password) {
 
