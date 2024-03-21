@@ -6,8 +6,8 @@ const cors = require('cors');
 
 // Esoteric resources
 const PORT = process.env.PORT || 3000;
-const notFoundHandler = require();
-const errorHandler = require();
+const notFoundHandler = require('../src/error-handlers/404');
+const errorHandler = require('../src/error-handlers/500');
 const authRouter = require('./routes/user-auth-router');
 
 // Prepare express app
@@ -43,4 +43,5 @@ function startServer() {
 
 module.exports = {
   startServer,
+  app,
 };
