@@ -14,8 +14,9 @@ module.exports = (DataTypes) => ({
     required: true,
   },
   role: {
-    type: DataTypes.ENUM('clerk, manager, auditor'),
+    type: DataTypes.ENUM('clerk', 'manager', 'auditor'),
     required: true,
+    defaultValue: 'clerk',
   },
   token: {
     type: DataTypes.VIRTUAL,
