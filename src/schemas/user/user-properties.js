@@ -1,10 +1,9 @@
 'use strict';
 
-const { DataTypes } = require('sequelize');
 const jwt = require ('jsonwebtoken');
 const { SECRET } = require('../../utilities/secret-config');
 
-module.exports = {
+module.exports = (DataTypes) => ({
   username: {
     type: DataTypes.STRING,
     required: true,
@@ -39,4 +38,4 @@ module.exports = {
       return accessControlList[this.role];
     },
   },
-};
+});

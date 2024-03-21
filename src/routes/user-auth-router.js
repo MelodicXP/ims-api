@@ -4,7 +4,7 @@ const express = require('express');
 const userAuthRouter = express.Router();
 
 const { users } = require('../schemas/models-and-collections');
-//todo set up middleware - const basicAuthMiddlware = require
+const basicAuthMiddlware = require('../authentication/middleware/basic-auth-middleware');
 
 function createUserResponseObject(userRecord) {
   return {
@@ -24,22 +24,21 @@ async function handleNewUserSignup(req, res, next) {
   }
 }
 
-// todo - reactivate once basic auth middlware created
-// async function handleUserSignin (req, res, next) {
-//   const user = req.user;
-//   try {
-//     if(!user || !user.token) {
-//       throw new Error('Authentication failed');
-//     }
-//     const userResponse = createUserResponseObject(user);
-//     res.status(200).json(userResponse);
-//   } catch (error) {
-//     next(error);
-//   }
-// }
+async function handleUserSignin (req, res, next) {
+  const user = req.user;
+  try {
+    if(!user || !user.token) {
+      throw new Error('Authentication failed');
+    }
+    const userResponse = createUserResponseObject(user);
+    res.status(200).json(userResponse);
+  } catch (error) {
+    next(error);
+  }
+}
 
 // Route definitions
 userAuthRouter.post('/signup', handleNewUserSignup);
-// todo - authRouter.post('/signin', basicAuthMiddleware, handleUserSignin);
+userAuthRouter.post('/signin', basicAuthMiddlware, handleUserSignin);
 
 module.exports = userAuthRouter;
