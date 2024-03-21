@@ -1,7 +1,7 @@
 'use strict';
 
 const express = require('express');
-const authRouter = express.Router();
+const userAuthRouter = express.Router();
 
 const { users } = require('../schemas/models-and-collections');
 //todo set up middleware - const basicAuthMiddlware = require
@@ -39,7 +39,7 @@ async function handleNewUserSignup(req, res, next) {
 // }
 
 // Route definitions
-authRouter.post('/signup', handleNewUserSignup);
+userAuthRouter.post('/signup', handleNewUserSignup);
 // todo - authRouter.post('/signin', basicAuthMiddleware, handleUserSignin);
 
-module.exports = authRouter;
+module.exports = userAuthRouter;
