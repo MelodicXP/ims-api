@@ -1,7 +1,9 @@
 'use strict';
 
-const properties = require('./user-properties');//import user properties here
+const properties = require('./user-properties');
 const { hashedPassword } = require('../../utilities/hash-password');
+const authenticateBasic = require('../../utilities/basic-auth');
+const authenticateToken = require('../../utilities/bearer-token-auth');
 
 const userSchema = (database, DataTypes) => {
   // Prepare the properties for sequelize database by passing DataTypes
@@ -12,6 +14,10 @@ const userSchema = (database, DataTypes) => {
   schema.beforeCreate(async (user) => {
     user.password = await hashedPassword(user.password);
   });
+
+  schema.authenticateBasic = (username, password) => authenticateBasic(schema, username, password);
+  
+  schema.authenticateToken = (token) => authenticateToken(schema, token);
 };
 
 module.exports = userSchema;
