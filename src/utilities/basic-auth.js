@@ -10,7 +10,7 @@ async function authenticateBasic (userModel, username, password) {
 
   try {
 
-    const user = await CRUD_Interface.get({ username });
+    const user = await CRUD_Interface.get({ username: username });
 
     if(!user) {
       throw new Error('User not found');
