@@ -6,40 +6,53 @@ const userAuthRouter = express.Router();
 const models = require('../models/database-models');
 const { users } = models;
 const basicAuthMiddlware = require('../authentication/middleware/basic-auth-middleware');
+const bearerAuthMiddleware = require('../authentication/middleware/bearer-auth-middleware');
+const CRUD = require('../utilities/crud-interface');
+// Todo const permissions = require('../auth/middleware/acl.js');
 
-function createUserResponseObject(userRecord) {
+function generateUserResponse(userRecord) {
   return {
     user: userRecord,
     token: userRecord.token,
   };
 }
 
-async function handleNewUserSignup(req, res, next) {
+async function registerUser(req, res, next) {
   const newUser = req.body;
   try {
-    let newUserRecord = await users.create(newUser);
-    const newUserResponse = createUserResponseObject(newUserRecord);
-    res.status(201).json(newUserResponse);
+    const newUserRecord = await users.create(newUser);
+    res.status(201).json(generateUserResponse(newUserRecord));
   } catch (error) {
     next(error.message);
   }
 }
 
-async function handleUserSignin (req, res, next) {
+async function loginUser(req, res, next) {
   const user = req.user;
   try {
     if(!user || !user.token) {
       throw new Error('Authentication failed');
     }
-    const userResponse = createUserResponseObject(user);
-    res.status(200).json(userResponse);
+    res.status(200).json(generateUserResponse(user));
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function listUsers(req, res, next) {
+  try {
+    const userRepository = new CRUD(users); 
+    const allUsers = await userRepository.get({});
+    const usernames = allUsers.map(user => user.username); // Assuming each userRecord has a username field
+    res.status(200).json(usernames);
   } catch (error) {
     next(error);
   }
 }
 
 // Route definitions
-userAuthRouter.post('/signup', handleNewUserSignup);
-userAuthRouter.post('/signin', basicAuthMiddlware, handleUserSignin);
+userAuthRouter.post('/signup', registerUser);
+userAuthRouter.post('/signin', basicAuthMiddlware, loginUser);
+userAuthRouter.get('/users', bearerAuthMiddleware, listUsers);
 
 module.exports = userAuthRouter;
