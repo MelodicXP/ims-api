@@ -3,6 +3,17 @@
 const jwt = require ('jsonwebtoken');
 const { SECRET } = require('../../utilities/secret-config');
 
+const generateToken = (payload) => jwt.sign(payload, SECRET);
+
+const getCapabilities = (role) => {
+  const accessControlList = {
+    clerk: ['create', 'update'],
+    manager: ['create', 'read', 'update', 'delete'],
+    auditor: ['read'],
+  };
+  return accessControlList[role] || [];
+};
+
 module.exports = (DataTypes) => ({
   username: {
     type: DataTypes.STRING,
@@ -21,22 +32,16 @@ module.exports = (DataTypes) => ({
   token: {
     type: DataTypes.VIRTUAL,
     get() {
-      return jwt.sign({ username: this.username }, SECRET);
+      return generateToken({ username: this.username });
     },
     set(tokenObj) {
-      let token = jwt.sign(tokenObj, SECRET);
-      return token;
+      return generateToken(tokenObj);
     },
   },
   capabilities: {
     type: DataTypes.VIRTUAL,
     get() {
-      const accessControlList = {
-        clerk: ['create', 'update'],
-        manager: ['read', 'create', 'update', 'delete'],
-        auditor: ['read'],
-      };
-      return accessControlList[this.role];
+      return getCapabilities(this.role);
     },
   },
 });

@@ -1,25 +1,22 @@
 'use strict';
 
-const userProperties = require('./user-properties');
-const { hashedPassword } = require('../../utilities/hash-password');
-const authenticateBasic = require('../../authentication/basic-auth');
-const authenticateToken = require('../../authentication/bearer-token-auth');
+const getUserSchemaProperties = require('./user-properties');
+const { hashPassword } = require('../../utilities/hash-password');
+const addBasicAuthenticationMethod = require('../../authentication/basic-auth');
+const addTokenAuthenticationMethod = require('../../authentication/bearer-token-auth');
 
-const userSchema = (database, DataTypes) => {
-  // Prepare the properties for sequelize database by passing DataTypes
-  const properties = userProperties(DataTypes);
+const defineUserModel = (sequilize, DataTypes) => {
+  const userSchemaProperties = getUserSchemaProperties(DataTypes);
+  const User = sequilize.define('Users', userSchemaProperties);
 
-  const schema = database.define('Users', properties);
-
-  schema.beforeCreate(async (user) => {
-    user.password = await hashedPassword(user.password);
+  User.beforeCreate(async (user) => {
+    user.password = await hashPassword(user.password);
   });
 
-  schema.authenticateBasic = (username, password) => authenticateBasic(schema, username, password);
+  User.authenticateBasic = (username, password) => addBasicAuthenticationMethod(User, username, password);
+  User.authenticateToken = (token) => addTokenAuthenticationMethod(User, token);
 
-  schema.authenticateToken = (token) => authenticateToken(schema, token);
-
-  return schema;
+  return User;
 };
 
-module.exports = userSchema;
+module.exports = defineUserModel;
