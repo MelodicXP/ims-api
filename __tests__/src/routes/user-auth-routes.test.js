@@ -80,4 +80,15 @@ describe ('User Authorization Router', () => {
     expect(user).not.toBeDefined();
     expect(token).not.toBeDefined();
   });
+
+  it('GETS users with a valid token and delete permission', async () => {
+
+    const response = await mockRequest
+      .get('/users')
+      .set('Authorization', `Bearer ${testManager.token}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeTruthy();
+    expect(response.body).toEqual(expect.anything());
+  });
 });
