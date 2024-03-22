@@ -3,35 +3,35 @@
 const bcrypt = require('bcrypt');
 const CRUD = require('../utilities/crud-interface');
 
-async function authenticateBasic(userModel, username, password) {
+async function authenticateUserBasic(userModel, username, password) {
 
-  const CRUDInterface = new CRUD(userModel);
+  const userRepository = new CRUD(userModel);
 
   try {
-    const user = await getUserByUsername(CRUDInterface, username);
-    await validateUserPassword(password, user);
-    return user; // User authenticated successfully
+    const user = await findUserByUsername(userRepository, username);
+    await verifyPassword(password, user);
+    return user; // Authentication successful
   } catch (error) {
-    throw new Error(error.message);
+    throw new Error('Authentication failed: ' + error.message);
   }
 }
 
-async function getUserByUsername(CRUDInterface, username) {
-  const user = await CRUDInterface.get({ username: username });
+async function findUserByUsername(repository, username) {
+  const user = await repository.get({ username });
   if (!user) {
     throw new Error('User not found');
   }
   return user;
 }
 
-async function validateUserPassword(password, user) {
-  const validPassword = await bcrypt.compare(password, user.password);
-  if (!validPassword) {
-    throw new Error('Invalid User');
+async function verifyPassword(plainTextPassword, user) {
+  const isPasswordValid = await bcrypt.compare(plainTextPassword, user.password);
+  if (!isPasswordValid) {
+    throw new Error('Invalid credentials');
   }
-  return true; // Return true as validation passed
+  return true; // Password verification passed
 }
 
-module.exports = authenticateBasic;
+module.exports = authenticateUserBasic;
 
 

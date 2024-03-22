@@ -13,8 +13,8 @@ const defineUserModel = (sequilize, DataTypes) => {
     user.password = await hashPassword(user.password);
   });
 
-  User.authenticateBasic = (username, password) => addBasicAuthenticationMethod(User, username, password);
-  User.authenticateToken = (token) => addTokenAuthenticationMethod(User, token);
+  User.authenticateUserBasic = (username, password) => addBasicAuthenticationMethod(User, username, password);
+  User.authenticateUserToken = (token) => addTokenAuthenticationMethod(User, token);
 
   return User;
 };
