@@ -3,7 +3,7 @@
 const express = require('express');
 const userAuthRouter = express.Router();
 
-const models = require('../schemas/models-and-collections');
+const models = require('../models/database-models');
 const { users } = models;
 const basicAuthMiddlware = require('../authentication/middleware/basic-auth-middleware');
 
