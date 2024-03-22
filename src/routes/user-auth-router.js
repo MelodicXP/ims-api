@@ -3,7 +3,8 @@
 const express = require('express');
 const userAuthRouter = express.Router();
 
-const { users } = require('../schemas/models-and-collections');
+const models = require('../schemas/models-and-collections');
+const { users } = models;
 const basicAuthMiddlware = require('../authentication/middleware/basic-auth-middleware');
 
 function createUserResponseObject(userRecord) {

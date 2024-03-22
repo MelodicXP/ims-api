@@ -1,7 +1,8 @@
 'use strict';
 
 const base64 = require('base-64');
-const { users } = require('../../schemas/models-and-collections');
+const models = require('../../schemas/models-and-collections');
+const { users } = models;
 
 function decodeBasicAuthHeader (authHeader) {
   const encodedString = authHeader.split(' ').pop;
