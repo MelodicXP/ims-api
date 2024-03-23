@@ -1,8 +1,8 @@
 'use strict';
 
 const jwt = require('jsonwebtoken');
-const CRUD = require('../utilities/crud-interface');
-const { SECRET } = require('../utilities/secret-config');
+const CRUD = require('../../utilities/crud-interface');
+const { SECRET } = require('../../utilities/secret-config');
 
 function decodeToken(token) {
   try {
