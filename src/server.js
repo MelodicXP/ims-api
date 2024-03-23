@@ -8,7 +8,7 @@ const cors = require('cors');
 const PORT = process.env.PORT || 3000;
 const notFoundHandler = require('../src/error-handlers/404');
 const errorHandler = require('../src/error-handlers/500');
-const authRouter = require('./routes/user-auth-router');
+const authRouter = require('./routes/user-auth-routes');
 
 // Prepare express app
 const app = express();
