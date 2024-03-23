@@ -1,128 +1,99 @@
 'use strict';
 
-const { app } = require('../../../../src/server.js');
-const { db, users } = require('../../../../src/schemas/index-models.js');
+const { app } = require('../../../src/server.js');
+const { database } = require('../../../src/database/database-config.js');
+const models  = require('../../../src/database/database-models.js');
+const { User } = models;
 const supertest = require('supertest');
 const request = supertest(app);
 
-let createdFoodItemId;
-let testUser, testWriter, testEditor, testAdmin;
+let createdItemId;
+let testClerk, testManager, testAuditor;
 let createdUsers = [];
 
 // Pre-load database with fake users
 beforeAll(async () => {
-  await db.sync({force: true});
+  await database.sync({force: true});
 
   // Create test users with different roles
-  testUser = await users.create({
-    username: 'TestUser',
+  testClerk = await User.create({
+    username: 'TestClerk',
     password: 'pass123',
-    role: 'user',
+    role: 'clerk',
   });
 
-  testWriter = await users.create({
-    username: 'TestWriter',
+  testManager = await User.create({
+    username: 'TestManager',
     password: 'pass123',
-    role: 'writer',
+    role: 'manager',
   });
 
-  testEditor = await users.create({
-    username: 'TestEditor',
+  testAuditor = await User.create({
+    username: 'TestAuditor',
     password: 'pass123',
-    role: 'editor',
+    role: 'auditor',
   });
 
-  testAdmin = await users.create({
-    username: 'TestAdmin',
-    password: 'pass123',
-    role: 'admin',
-  });
-
-  createdUsers.push(testUser, testWriter, testEditor, testAdmin);
+  createdUsers.push(testClerk, testManager, testAuditor);
 });
 
 afterAll(async () => {
-  await db.drop();
+  await database.drop();
 });
 
 describe('ACL Integration', () => {
 
-  it('verfies Writer can CREATE', async () => {
-    // Food Item to be created
-    const foodItem = {
-      name: 'banana',
-      calories: 100,
-      type: 'fruit',
+  it('verfies clerk can CREATE', async () => {
+    const inventoryItem = {
+      itemName: 'cell phone',
+      price: 100,
+      quantity: 4,
     };
 
-    // Create food item with authorized user
     let response = await request
-      .post('/api/v2/food')
-      .set('Authorization', `Bearer ${testWriter.token}`)
-      .send(foodItem); // send food data in request body
+      .post('/api/v1/item')
+      .set('Authorization', `Bearer ${testClerk.token}`)
+      .send(inventoryItem); 
 
     expect(response.status).toEqual(201);
-    expect(response.body.name).toEqual(foodItem.name);
+    expect(response.body.name).toEqual(inventoryItem.name);
 
-    // Save ID of food item for use in later tests
-    createdFoodItemId = response.body.id;
+    // Save ID of item for use in later tests
+    createdItemId = response.body.id;
   });
 
-  it('verfies Editor can CREATE', async () => {
-    // Food Item to be created
-    const foodItem = {
-      name: 'banana',
-      calories: 100,
-      type: 'fruit',
+  it('verfies Manager can CREATE', async () => {
+    const inventoryItem = {
+      itemName: 'charger',
+      price: 100,
+      quantity: 2,
     };
 
-    // Create food item with authorized user
+    // Create item with authorized user
     let response = await request
-      .post('/api/v2/food')
-      .set('Authorization', `Bearer ${testEditor.token}`)
-      .send(foodItem); // send food data in request body
+      .post('/api/v1/item')
+      .set('Authorization', `Bearer ${testManager.token}`)
+      .send(inventoryItem); 
 
     expect(response.status).toEqual(201);
-    expect(response.body.name).toEqual(foodItem.name);
+    expect(response.body.name).toEqual(inventoryItem.name);
 
-    // Save ID of food item for use in later tests
-    createdFoodItemId = response.body.id;
+    // Save ID of item for use in later tests
+    createdItemId = response.body.id;
   });
 
-  it('verfies Admin can CREATE', async () => {
-    // Food Item to be created
-    const foodItem = {
-      name: 'banana',
-      calories: 100,
-      type: 'fruit',
+  it('does NOT allow Auditor to CREATE', async () => {
+    const inventoryItem = {
+      itemName: 'fast charger',
+      price: 200,
+      quantity: 4,
     };
 
-    // Create food item with authorized user
+    // Create item with unauthorized user
     let response = await request
-      .post('/api/v2/food')
-      .set('Authorization', `Bearer ${testAdmin.token}`)
-      .send(foodItem); // send food data in request body
-
-    expect(response.status).toEqual(201);
-    expect(response.body.name).toEqual(foodItem.name);
-
-    // Save ID of food item for use in later tests
-    createdFoodItemId = response.body.id;
-  });
-
-  it('does NOT allow User to CREATE', async () => {
-    // Food Item to be created
-    const foodItem = {
-      name: 'banana',
-      calories: 100,
-      type: 'fruit',
-    };
-
-    // Create food item with authorized user
-    let response = await request
-      .post('/api/v2/food')
-      .set('Authorization', `Bearer ${testUser.token}`)
-      .send(foodItem); // send food data in request body
+      .post('/api/v1/item')
+      .set('Authorization', `Bearer ${testAuditor.token}`)
+      .send(inventoryItem); 
 
     expect(response.status).toEqual(403);
     expect(response.body.message).toEqual('Access Denied');
@@ -137,7 +108,7 @@ describe('ACL Integration', () => {
 
       // Set Authorization header
       let response = await request
-        .get('/api/v2/food')
+        .get('/api/v1/item')
         .set('Authorization', authHeader);
 
       expect(response.status).toEqual(200);
@@ -154,130 +125,98 @@ describe('ACL Integration', () => {
 
       // Set Authorization header
       let response = await request
-        .get(`/api/v2/food/${createdFoodItemId}`)
+        .get(`/api/v1/item/${createdItemId}`)
         .set('Authorization', authHeader);
 
       expect(response.status).toEqual(200);
       expect(Array.isArray(response.body)).toBe(false); // Check if response body is an array
-      expect(response.body.name).toEqual('banana');
+      expect(response.body.itemName).toEqual('charger');
     }
   });
 
-  it('verifies Editor can UPDATE' , async () => {
-    // Food Item to be updated
-    const foodItem = {
-      name: 'banana',
-      calories: 250,
-      type: 'fruit',
+  it('verifies clerk can UPDATE' , async () => {
+    // Item to be updated
+    const inventoryItem = {
+      itemName: 'charger',
+      price: 150,
+      quantity: 2,
     };
 
     let response = await request
-      .put(`/api/v2/food/${createdFoodItemId}`)
-      .set('Authorization', `Bearer ${testEditor.token}`)
-      .send(foodItem); // send food data in request body
+      .put(`/api/v1/item/${createdItemId}`)
+      .set('Authorization', `Bearer ${testClerk.token}`)
+      .send(inventoryItem); 
 
     expect(response.status).toEqual(200);
-    expect(response.body.calories).toEqual(250);
+    expect(response.body.price).toEqual(150);
   });
 
-  it('verifies Admin can UPDATE' , async () => {
-    // Food Item to be updated
-    const foodItem = {
-      name: 'banana',
-      calories: 300,
-      type: 'fruit',
+  it('verifies Manager can UPDATE' , async () => {
+    // Item to be updated
+    const inventoryItem = {
+      itemName: 'charger',
+      price: 180,
+      quantity: 2,
     };
 
     let response = await request
-      .put(`/api/v2/food/${createdFoodItemId}`)
-      .set('Authorization', `Bearer ${testAdmin.token}`)
-      .send(foodItem); // send food data in request body
+      .put(`/api/v1/item/${createdItemId}`)
+      .set('Authorization', `Bearer ${testManager.token}`)
+      .send(inventoryItem); // send food data in request body
 
     expect(response.status).toEqual(200);
-    expect(response.body.calories).toEqual(300);
+    expect(response.body.price).toEqual(180);
   });
 
-  it('does NOT allow User to UPDATE', async () => {
+  it('does NOT allow Auditor to UPDATE', async () => {
     // set('Authorization', `Bearer ${testWriter.token}`) is used to set and send header
-    if (!createdFoodItemId) {
+    if (!createdItemId) {
       throw new Error('No food item ID defined. Make sure \'allows create access\' test runs successfully before this test.');
     }
 
-    // Update food item
-    const updatedFoodItem = {
-      calories: 250, // New calorie count
+    const updatedItem = {
+      quantity: 4, // New calorie count
     };
 
     let response = await request
-      .put(`/api/v2/food/${createdFoodItemId}`)
-      .set('Authorization', `Bearer ${testUser.token}`)
-      .send(updatedFoodItem);
+      .put(`/api/v1/item/${createdItemId}`)
+      .set('Authorization', `Bearer ${testAuditor.token}`)
+      .send(updatedItem);
 
     expect(response.status).toEqual(403);
     expect(response.body.message).toEqual('Access Denied');
   });
 
-  it('does NOT allow Writer to UPDATE', async () => {
+  it('does NOT allow clerk to DELETE', async () => {
     // set('Authorization', `Bearer ${testWriter.token}`) is used to set and send header
-    if (!createdFoodItemId) {
-      throw new Error('No food item ID defined. Make sure \'allows create access\' test runs successfully before this test.');
-    }
-
-    // Update food item
-    const updatedFoodItem = {
-      calories: 250, // New calorie count
-    };
 
     let response = await request
-      .put(`/api/v2/food/${createdFoodItemId}`)
-      .set('Authorization', `Bearer ${testWriter.token}`)
-      .send(updatedFoodItem);
+      .delete(`/api/v1/item/${createdItemId}`)
+      .set('Authorization', `Bearer ${testClerk.token}`);
 
     expect(response.status).toEqual(403);
     expect(response.body.message).toEqual('Access Denied');
   });
 
-  it('does NOT allow User to DELETE', async () => {
+  it('does NOT allow Auditor to DELETE', async () => {
     // set('Authorization', `Bearer ${testWriter.token}`) is used to set and send header
 
     let response = await request
-      .delete(`/api/v2/food/${createdFoodItemId}`)
-      .set('Authorization', `Bearer ${testUser.token}`);
+      .delete(`/api/v1/item/${createdItemId}`)
+      .set('Authorization', `Bearer ${testAuditor.token}`);
 
     expect(response.status).toEqual(403);
     expect(response.body.message).toEqual('Access Denied');
   });
 
-  it('does NOT allow Writer to DELETE', async () => {
+  it('verifies Manager can DELETE', async () => {
     // set('Authorization', `Bearer ${testWriter.token}`) is used to set and send header
 
     let response = await request
-      .delete(`/api/v2/food/${createdFoodItemId}`)
-      .set('Authorization', `Bearer ${testWriter.token}`);
-
-    expect(response.status).toEqual(403);
-    expect(response.body.message).toEqual('Access Denied');
-  });
-
-  it('does NOT allow Editor to DELETE', async () => {
-    // set('Authorization', `Bearer ${testWriter.token}`) is used to set and send header
-
-    let response = await request
-      .delete(`/api/v2/food/${createdFoodItemId}`)
-      .set('Authorization', `Bearer ${testEditor.token}`);
-
-    expect(response.status).toEqual(403);
-    expect(response.body.message).toEqual('Access Denied');
-  });
-
-  it('verifies Admin can DELETE', async () => {
-    // set('Authorization', `Bearer ${testWriter.token}`) is used to set and send header
-
-    let response = await request
-      .delete(`/api/v2/food/${createdFoodItemId}`)
-      .set('Authorization', `Bearer ${testAdmin.token}`);
+      .delete(`/api/v1/item/${createdItemId}`)
+      .set('Authorization', `Bearer ${testManager.token}`);
 
     expect(response.status).toEqual(200);
-    expect(response.body.message).toEqual(`Record ${createdFoodItemId} deleted`);
+    expect(response.body.message).toEqual(`Record ${createdItemId} deleted`);
   });
 });
