@@ -24,7 +24,7 @@ app.use(authRouter);
 // Establish default route
 app.get('/', (req, res, next) => {
   const message = 'Default route message';
-  res.status(200).send(message);
+  res.status(200).json({ message });
 });
 
 // Catchalls
