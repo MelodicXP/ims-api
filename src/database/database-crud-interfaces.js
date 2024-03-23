@@ -8,7 +8,7 @@ const itemCrud = new CrudInterface(ItemModel);
 const categoryCrud = new CrudInterface(CategoryModel);
 
 module.exports = {
-  itemCrud,
-  categoryCrud,
+  item: itemCrud,
+  category: categoryCrud,
 };
 
