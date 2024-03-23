@@ -1,13 +1,13 @@
 'use strict';
 
-const getUserSchemaProperties = require('./user-properties');
+const getUserProperties = require('./user-properties');
 const { hashPassword } = require('../../utilities/hash-password');
 const addBasicAuthenticationMethod = require('../../authentication/auth-logic/basic-auth');
 const addTokenAuthenticationMethod = require('../../authentication/auth-logic/bearer-token-auth');
 
-const defineUserModel = (sequilize, DataTypes) => {
-  const userSchemaProperties = getUserSchemaProperties(DataTypes);
-  const User = sequilize.define('Users', userSchemaProperties);
+const defineUserModel = (sequelize, DataTypes) => {
+  const userModelProperties = getUserProperties(DataTypes);
+  const User = sequelize.define('Users', userModelProperties);
 
   User.beforeCreate(async (user) => {
     user.password = await hashPassword(user.password);
