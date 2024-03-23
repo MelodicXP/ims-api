@@ -4,8 +4,8 @@ const supertest = require('supertest');
 
 const { app } = require('../../../src/server.js');
 const { database } = require('../../../src/database/database-config.js');
-const models  = require('../../../src/models/database-models.js');
-const { users } = models;
+const models  = require('../../../src/database/database-models.js');
+const { User } = models;
 
 const mockRequest = supertest(app);
 
@@ -18,7 +18,7 @@ let userData = {
 beforeAll(async () => {
   await database.sync({force: true});
   // Create admin user for delete test
-  testManager = await users.create({
+  testManager = await User.create({
     username: 'TestManager',
     password: 'pass123',
     role: 'manager',

@@ -3,17 +3,17 @@
 const base64 = require('base-64');
 const middleware = require('../../../../src/authentication/middleware/basic-auth-middleware.js');
 const { database } = require('../../../../src/database/database-config.js');
-const models = require('../../../../src/models/database-models.js');
-const { users } = models;
+const models = require('../../../../src/database/database-models.js');
+const { User } = models;
 
 let userInfo = {
   admin: { username: 'admin-basic', password: 'password' },
 };
 
-// Pre-load our database with fake users
+// Pre-load our database with fake User
 beforeAll(async () => {
   await database.sync({force: true});
-  await users.create(userInfo.admin);
+  await User.create(userInfo.admin);
 });
 afterAll(async () => {
   await database.close();

@@ -1,8 +1,8 @@
 'use strict';
 
 const base64 = require('base-64');
-const models = require('../../models/database-models');
-const { users } = models;
+const models = require('../../database/database-models');
+const { User } = models;
 
 function extractCredentialsFromHeader (authHeader) {
   const encodedCredentials = authHeader.split(' ').pop();
@@ -24,7 +24,7 @@ module.exports = async (req, res, next) => {
   
   try {
     const { username, password } = extractCredentialsFromHeader(authHeader);
-    req.user = await users.authenticateUserBasic(username, password);
+    req.user = await User.authenticateUserBasic(username, password);
     next();
   } catch (error) {
     console.error(error);

@@ -3,8 +3,8 @@
 // require('dotenv').config();
 const middleware = require('../../../../src/authentication/middleware/bearer-auth-middleware.js');
 const { database } = require('../../../../src/database/database-config.js');
-const models = require('../../../../src/models/database-models.js');
-const { users } = models;
+const models = require('../../../../src/database/database-models.js');
+const { User } = models;
 const jwt = require('jsonwebtoken');
 const { SECRET } = require('../../../../src/utilities/secret-config.js');
 
@@ -16,7 +16,7 @@ let userInfo = {
 beforeAll(async () => {
   await database.sync({ force: true });
   try {
-    await users.create(userInfo.admin);
+    await User.create(userInfo.admin);
   } catch (error) {
     console.error('Error creating test user:', error);
   }

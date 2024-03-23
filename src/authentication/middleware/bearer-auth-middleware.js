@@ -1,7 +1,7 @@
 'use strict';
 
-const models = require('../../models/database-models');
-const { users } = models;
+const models = require('../../database/database-models');
+const { User } = models;
 
 function extractTokenFromHeader(authHeader) {
   const token = authHeader.split(' ').pop();
@@ -14,7 +14,7 @@ function sendAuthenticationErrorResponse(res) {
 
 async function validateUserToken (token) {
   try {
-    const user = await users.authenticateUserToken(token);
+    const user = await User.authenticateUserToken(token);
     if (!user) {
       throw new Error('Invalid Token');
     }
