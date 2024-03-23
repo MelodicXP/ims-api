@@ -3,8 +3,8 @@
 const express = require('express');
 const userAuthRouter = express.Router();
 
-const models = require('../models/database-models');
-const { users } = models;
+const models = require('../database/database-models');
+const { User } = models;
 const verifyBasicAuthentication = require('../authentication/middleware/basic-auth-middleware');
 const verifyBearerToken = require('../authentication/middleware/bearer-auth-middleware');
 const CRUD = require('../utilities/crud-interface');
@@ -20,7 +20,7 @@ function generateUserResponse(userRecord) {
 async function registerUser(req, res, next) {
   const newUser = req.body;
   try {
-    const newUserRecord = await users.create(newUser);
+    const newUserRecord = await User.create(newUser);
     res.status(201).json(generateUserResponse(newUserRecord));
   } catch (error) {
     next(error.message);
@@ -41,7 +41,7 @@ async function loginUser(req, res, next) {
 
 async function listUsers(req, res, next) {
   try {
-    const userRepository = new CRUD(users); 
+    const userRepository = new CRUD(User); 
     const allUsers = await userRepository.get({});
     const usernames = allUsers.map(user => user.username);
     res.status(200).json(usernames);
