@@ -8,7 +8,8 @@ const cors = require('cors');
 const PORT = process.env.PORT || 3000;
 const notFoundHandler = require('../src/error-handlers/404');
 const errorHandler = require('../src/error-handlers/500');
-const authRouter = require('./routes/user-auth-routes');
+const authRoutes = require('./routes/user-auth-routes');
+const v1Routes = require('./routes/v1-routes');
 
 // Prepare express app
 const app = express();
@@ -19,7 +20,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use(authRouter);
+app.use(authRoutes);
+app.use('/api/v1', v1Routes);
 
 // Establish default route
 app.get('/', (req, res, next) => {
