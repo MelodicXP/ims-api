@@ -91,4 +91,17 @@ describe ('User Authorization Router', () => {
     expect(response.body).toBeTruthy();
     expect(response.body).toEqual(expect.anything());
   });
+
+  it('verifies bearer auth fails with an invalid token', async () => {
+
+    // First, use basic to login to get a token
+    const response = await mockRequest.get('/users')
+      .set('Authorization', `Bearer foobar`);
+    const userList = response.body;
+
+    // Not checking the value of the response, only that we "got in"
+    expect(response.status).toBe(403);
+    expect(response.body.message).toEqual('Invalid Login');
+    expect(userList.length).toBeFalsy();
+  });
 });
