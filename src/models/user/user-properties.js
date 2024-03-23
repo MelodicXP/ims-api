@@ -7,7 +7,7 @@ const generateToken = (payload) => jwt.sign(payload, SECRET);
 
 const getCapabilities = (role) => {
   const accessControlList = {
-    clerk: ['create', 'update'],
+    clerk: ['create', 'read', 'update'],
     manager: ['create', 'read', 'update', 'delete'],
     auditor: ['read'],
   };
