@@ -1,14 +1,14 @@
 'use strict';
 
-const Collection = require('../utilities/crud-interface');
+const CrudInterface = require('../utilities/crud-interface');
 const models = require ('./database-models');
-const { Item: itemsModel, Category: categoriesModel } = models;
+const { Item: ItemModel, Category: CategoryModel } = models;
 
-const itemsCollection = new Collection(itemsModel);
-const categoriesCollection = new Collection(categoriesModel);
+const itemCrud = new CrudInterface(ItemModel);
+const categoryCrud = new CrudInterface(CategoryModel);
 
 module.exports = {
-  itemsCollection,
-  categoriesCollection,
+  itemCrud,
+  categoryCrud,
 };
 
