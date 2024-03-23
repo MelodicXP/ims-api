@@ -5,10 +5,10 @@ const userAuthRouter = express.Router();
 
 const models = require('../models/database-models');
 const { users } = models;
-const basicAuthMiddlware = require('../authentication/middleware/basic-auth-middleware');
-const bearerAuthMiddleware = require('../authentication/middleware/bearer-auth-middleware');
+const verifyBasicAuthentication = require('../authentication/middleware/basic-auth-middleware');
+const verifyBearerToken = require('../authentication/middleware/bearer-auth-middleware');
 const CRUD = require('../utilities/crud-interface');
-// Todo const permissions = require('../auth/middleware/acl.js');
+const requirePermission = require('../authentication/middleware/access-control-list-middleware');
 
 function generateUserResponse(userRecord) {
   return {
@@ -43,7 +43,7 @@ async function listUsers(req, res, next) {
   try {
     const userRepository = new CRUD(users); 
     const allUsers = await userRepository.get({});
-    const usernames = allUsers.map(user => user.username); // Assuming each userRecord has a username field
+    const usernames = allUsers.map(user => user.username);
     res.status(200).json(usernames);
   } catch (error) {
     next(error);
@@ -52,7 +52,7 @@ async function listUsers(req, res, next) {
 
 // Route definitions
 userAuthRouter.post('/signup', registerUser);
-userAuthRouter.post('/signin', basicAuthMiddlware, loginUser);
-userAuthRouter.get('/users', bearerAuthMiddleware, listUsers);
+userAuthRouter.post('/signin', verifyBasicAuthentication, loginUser);
+userAuthRouter.get('/users', verifyBearerToken, requirePermission('delete'), listUsers);
 
 module.exports = userAuthRouter;
