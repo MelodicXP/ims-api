@@ -18,10 +18,14 @@ describe ('Deafault server route and and 404 error handler', () => {
 
   it('checks 404 error handler', async () => {
 
-    const response = await mockRequest.get('/incorrect-route');
+    const response = await mockRequest.get('/badRoute');
 
     expect(response.status).toBe(404);
     expect(response.body.message).toBe('Sorry, we could not find what you were looking for');
   });
-
+  
+  it('handles 404 on a bad method', async () => {
+    const response = await mockRequest.put('/category');
+    expect(response.status).toEqual(404);
+  });
 });
