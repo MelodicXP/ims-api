@@ -1,6 +1,6 @@
 'use strict';
 
-const models = require('../../database/database-models');
+const models = require('../../models/create-all-models');
 const { User } = models;
 
 function extractTokenFromHeader(authHeader) {

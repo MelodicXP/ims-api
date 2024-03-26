@@ -1,7 +1,7 @@
 'use strict';
 
 const base64 = require('base-64');
-const models = require('../../database/database-models');
+const models = require('../../models/create-all-models');
 const { User } = models;
 
 function extractCredentialsFromHeader (authHeader) {
