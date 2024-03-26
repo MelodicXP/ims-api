@@ -53,14 +53,7 @@ SECRET=secretOfChoice
   - POST /signup creates a new user and sends an object with the user and the token to the client.
   - POST /signin with basic authentication headers logs in a user and sends an object with the user and the token to the client.
 
-- V1 (Unauthenticated API) routes:
-  - POST /api/v1/:model adds an item to the DB and returns an object with the added item.
-  - GET /api/v1/:model returns a list of :model items.
-  - GET /api/v1/:model/ID returns a single item by ID.
-  - PUT /api/v1/:model/ID returns a single, updated item by ID.
-  - DELETE /api/v1/:model/ID returns an empty object. Subsequent GET for the same ID should result in nothing found.  
-
-- V2 (Authenticated API) routes:
+- V1 (Authenticated API) routes:
   - POST /api/v2/:model with a bearer token that has create permissions adds an item to the DB and returns an object with the added item.
   - GET /api/v2/:model with a bearer token that has read permissions returns a list of :model items.
   - GET /api/v2/:model/ID with a bearer token that has read permissions returns a single item by ID.
@@ -69,5 +62,8 @@ SECRET=secretOfChoice
 
 #### UML
 
-![Lab-08-UML](./assets/auth-api-UML.png)
-![Lab-08-UML-File-Structure](./assets/lab-08-file-structure.png)
+![Lab-09-UML](./assets/lab-09-UML.png)
+
+#### File Structure
+
+![Lab-09-UML-File-Structure](./assets/FileStructureLab09.png)
