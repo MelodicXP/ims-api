@@ -3,11 +3,11 @@
 const express = require('express');
 const userAuthRouter = express.Router();
 
-const models = require('../database/database-models');
+const models = require('../models/create-all-models');
 const { User } = models;
 const verifyBasicAuthentication = require('../authentication/middleware/basic-auth-middleware');
 const verifyBearerToken = require('../authentication/middleware/bearer-auth-middleware');
-const CRUD = require('../utilities/crud-interface');
+const CRUD = require('../utilities/crud-abilities');
 const requirePermission = require('../authentication/middleware/access-control-list-middleware');
 
 function generateUserResponse(userRecord) {

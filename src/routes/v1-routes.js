@@ -2,7 +2,8 @@
 
 const express = require('express');
 
-const crudInterfaces = require('../database/database-crud-interfaces');
+const crudInterfaces = require('../models/give-models-crud-abilities');
+const { item } = crudInterfaces; 
 const verifyBearerToken = require('../authentication/middleware/bearer-auth-middleware');
 const requirePermission = require('../authentication/middleware/access-control-list-middleware');
 
@@ -14,6 +15,24 @@ async function handleGetAll(req, res, next) {
     let allRecords = await req.model.get();
     res.status(200).json(allRecords);
   } catch (error) {
+    next(error);
+  }
+}
+
+async function handleGetItemsByCategory (req, res, next) {
+  try {
+    const categoryID = req.params.id;
+
+    // Use the method from your CRUD abilities file, adjusted to match your provided method
+    const items = await item.getbyForeignKey('categoryID', categoryID);
+
+    if (!items || items.length === 0) {
+      return res.status(404).json({ message: `No items found for category with ID ${categoryID}` });
+    }
+
+    res.status(200).json(items);
+  } catch (error) {
+    console.error(`Error getting items for category ${req.params.categoryId}:`, error);
     next(error);
   }
 }
@@ -30,6 +49,7 @@ async function handleGetOne(req, res, next) {
     next(error);
   }
 }
+
 
 async function handleCreate(req, res, next) {
   try {
@@ -81,5 +101,7 @@ router.get('/:model/:id', verifyBearerToken, handleGetOne);
 router.post('/:model', verifyBearerToken, requirePermission('create'), handleCreate);
 router.put('/:model/:id', verifyBearerToken, requirePermission('update'), handleUpdate);
 router.delete('/:model/:id', verifyBearerToken, requirePermission('delete'), handleDelete);
+
+router.get('/:model/:id/items', verifyBearerToken, handleGetItemsByCategory);
 
 module.exports = router;

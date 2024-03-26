@@ -21,6 +21,21 @@ class CRUD {
     }
   }
 
+  // READ - get records by foreign key (retrieves associated records)
+  async getbyForeignKey(foreignKey, value) {
+    try {
+      if(!value) {
+        throw new Error('A value for foreign key is required');
+      }
+
+      const records = await this.model.findAll({ where: {[foreignKey]: value } });
+      return records;
+    } catch (error) {
+      console.error(`Read by foreign key (${foreignKey}) error in crud abilities:`, error);
+      throw error;
+    }
+  }
+
   // UPDATE 
   async update(id, data) {
     const record = await this.model.findOne({ where: { id } });
@@ -31,6 +46,7 @@ class CRUD {
   async delete(id) {
     return await this.model.destroy({ where: { id } });
   }
+
 }
 
 module.exports = CRUD;

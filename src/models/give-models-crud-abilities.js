@@ -1,7 +1,7 @@
 'use strict';
 
-const CrudInterface = require('../utilities/crud-interface');
-const models = require ('./database-models');
+const CrudInterface = require('../utilities/crud-abilities');
+const models = require ('./create-all-models');
 const { Item: ItemModel, Category: CategoryModel } = models;
 
 const itemCrud = new CrudInterface(ItemModel);
