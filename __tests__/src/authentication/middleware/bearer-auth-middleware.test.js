@@ -3,7 +3,7 @@
 // require('dotenv').config();
 const middleware = require('../../../../src/authentication/middleware/bearer-auth-middleware.js');
 const { database } = require('../../../../src/database/database-config.js');
-const models = require('../../../../src/database/database-models.js');
+const models = require('../../../../src/models/create-all-models.js');
 const { User } = models;
 const jwt = require('jsonwebtoken');
 const { SECRET } = require('../../../../src/utilities/secret-config.js');
