@@ -14,9 +14,9 @@ Objective: Build a backend API implementing a fully functional, authenticated an
 
 ### Links and Resources
 
-- [Pull Request](https://github.com/MelodicXP/auth-api/pulls)
-- [GitHub Actions ci/cd](https://github.com/MelodicXP/auth-api/actions)
-- Prod [back-end server url](https://auth-api-1n5k.onrender.com)
+- [Pull Request](https://github.com/MelodicXP/ims-api/pulls)
+- [GitHub Actions ci/cd](https://github.com/MelodicXP/ims-api/actions)
+- Prod [back-end server url](https://ims-api-lab09.onrender.com/)
 
 ### Collaborators
 
