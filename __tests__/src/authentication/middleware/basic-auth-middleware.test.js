@@ -3,7 +3,7 @@
 const base64 = require('base-64');
 const middleware = require('../../../../src/authentication/middleware/basic-auth-middleware.js');
 const { database } = require('../../../../src/database/database-config.js');
-const models = require('../../../../src/database/database-models.js');
+const models = require('../../../../src/models/create-all-models.js');
 const { User } = models;
 
 let userInfo = {
