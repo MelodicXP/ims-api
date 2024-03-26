@@ -1,0 +1,31 @@
+name: Run Javascript Tests
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: npm install, build, and test
+      run: |
+        npm i
+        npm run build --if-present
+        npm test
+      env:
+        CI: true
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        SECRET: ${{ secrets.SECRET }}
+        REISSUE_TOKEN_ON_EACH_REQUEST: ${{ secrets.REISSUE_TOKEN_ON_EACH_REQUEST }}
