@@ -2,12 +2,7 @@
 
 module.exports = (DataTypes) => ({
   categoryName: {
-    type: DataTypes.ENUM(
-      'cases',
-      'chargers',
-      'cell phones',
-      'accessories',
-    ),
+    type: DataTypes.STRING,
     required: true,
   },
 });
